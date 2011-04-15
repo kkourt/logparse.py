@@ -373,6 +373,11 @@ class LogParser(object):
 		""" parses a file object, and put the result in .data """
 		self.data = list(self.go_iter(f))
 
+def logparse(fileobj, *args,**kwargs):
+	lp = LogParser(*args,**kwargs)
+	lp.go(fileobj)
+	return lp.data
+
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()
