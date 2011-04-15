@@ -1,0 +1,4 @@
+- logparse.py : module file
+- lk-parse.py : example for parsing an mbox file
+- 2000-11.bz2 : example mbox file 
+(http://www.cslab.ece.ntua.gr/~kkourt/src/logparse/2000-11.bz2)
