@@ -297,7 +297,13 @@ class LogParser(object):
 				globs['__match_obj'] = match
 				globs['__finpt_obj'] = self._f
 				#globs['__cdata_obj'] = self._current_data
-				rterm = eval(rterm, globs)
+
+				try:
+					rterm = eval(rterm, globs)
+				except:
+					print "FAILED to evaluate: %s = %s" % (lterm, rterm,)
+					raise
+
 				if self._debug:
 					print 'ASSIGN ', lterm, '=', rterm, '--'
 				self._current_data[lterm] = rterm
