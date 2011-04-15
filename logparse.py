@@ -7,6 +7,43 @@ import re
 class StopParsing(Exception):
 	pass
 
+class MultiFiles(object):
+    """
+    Use this class to fool LogParser so that it parses mutliple
+    files in one pass
+    """
+    def __init__(self, files_iter, start_msg, end_msg):
+        """ create a MultiFiles object:
+
+           files_iter: iterator of multiple files
+           start_msg : function to print message when a new file starts
+                       (is called with the name of the file as argument)
+           end_msg   : similar to start_msg
+        """
+        self._files_iter = files_iter
+        self._start_msg  = start_msg
+        self._end_msg    = end_msg
+        self._cur_fname  = None
+        self._cur_file   = None
+
+    def readline(self): # QUACK, QUACK!
+        if self._cur_file is not None:
+            ret = self._cur_file.readline()
+            if ret != '':
+                return ret
+            # file ended
+            self._cur_file = self._cur_fname = None
+            return self._end_msg(self._cur_fname)
+        # need to open new file
+        try:
+            fname = self._files_iter.next()
+        except StopIteration:
+            return ''
+        self._cur_fname = fname
+        self._cur_file  = open(fname)
+        ret = self._start_msg(self._cur_fname)
+        return ret
+
 class LogParser(object):
 	"""
 	LogParser: This class implements a file parser:
@@ -302,7 +339,7 @@ class LogParser(object):
 		    resulting key-value pairs """
 		if isinstance(f, str):
 			f = StringIO(f)
-		self._f = f
+		self._f = f # this is just used for the __finpt_obj
 
 		if self._debug:
 			print 'STARTED PARSING'
